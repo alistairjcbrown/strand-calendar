@@ -1,4 +1,7 @@
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'  # every morning at 3am
 
 name: Strand Calendar
 
@@ -16,12 +19,12 @@ jobs:
         with:
           node-version-file: .node-version
       - run: npm ci
+      - id: date
+        run: |
+          echo "currentDate=$(TZ=Europe/Belfast date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "currentTime=$(TZ=Europe/Belfast date +'%H:%M:%S')" >> "$GITHUB_OUTPUT"
 
       # Generate files
-      - id: date
-        run: echo "{currentDate}={$(TZ=Europe/Belfast date +'%Y-%m-%d')}" >> $GITHUB_STATE
-      - id: time
-        run: echo "{currentTime}={$(TZ=Europe/Belfast date +'%H:%M:%S')}" >> $GITHUB_STATE
       - run: node index.js
 
       # Create release with assets
@@ -33,4 +36,5 @@ jobs:
           makeLatest: true
           tag: ${{ steps.date.outputs.currentDate }}
           commit: main
-          body: "Calendar and data files generated at ${{ steps.time.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
+          body: "Calendar and data files generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
+      - run: echo "Calendar and data files generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}" >> $GITHUB_STEP_SUMMARY
