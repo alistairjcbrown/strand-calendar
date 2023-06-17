@@ -9,16 +9,16 @@ jobs:
     steps:
       # Setup
       - uses: actions/checkout@v3
-      - id: date
-        run: echo "{currentDate}={$(TZ=Europe/Belfast date +'%Y-%m-%d')}" >> $GITHUB_STATE
-      - id: time
-        run: echo "{currentTime}={$(TZ=Europe/Belfast date +'%H:%M:%S')}" >> $GITHUB_STATE
       - uses: actions/setup-node@v3
         with:
           node-version-file: .node-version
       - run: npm ci
 
       # Generate files
+      - id: date
+        run: echo "{currentDate}={$(TZ=Europe/Belfast date +'%Y-%m-%d')}" >> $GITHUB_STATE
+      - id: time
+        run: echo "{currentTime}={$(TZ=Europe/Belfast date +'%H:%M:%S')}" >> $GITHUB_STATE
       - run: node index.js
 
       # Create release with assets

@@ -5,6 +5,8 @@ const { parse, format, getTime } = require("date-fns");
 const en = require("date-fns/locale/en-GB");
 const ics = require("ics");
 
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
 const fail = (url, page) => {
   console.log(
     "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -134,7 +136,7 @@ const generateEventDescription = (show, performance) => {
   // Go to each of the show pages and get the times they're on at
   console.log(`Getting data for ${uniqueShowUrls.size} shows ...`);
   const showUrls = Array.from(uniqueShowUrls);
-  const requestsPerBatch = 2;
+  const requestsPerBatch = 1;
   const delayPerBatch = 5000;
   const batchCount = Math.ceil(showUrls.length / requestsPerBatch);
   const shows = [];
@@ -148,13 +150,22 @@ const generateEventDescription = (show, performance) => {
 
     await Promise.all(
       urls.map(async (url) => {
-        const page = await fetch(url).then((response) => response.text());
+        let response = await fetch(url);
+        // If we get a "Too Many Requests" response, wait before trying again
+        if (response.status === 429) {
+          console.log(
+            "    - ⚠️ 'Too Many Requests' response, waiting before trying again"
+          );
+          await sleep(60000);
+          response = await fetch(url);
+        }
+        const page = await response.text();
         const show = createShowFrom(url, page);
         shows.push(show);
       })
     );
 
-    await new Promise((resolve) => setTimeout(resolve, delayPerBatch));
+    await sleep(delayPerBatch);
   }
   const dataFile = `${__dirname}/strand-shows.json`;
   writeFileSync(dataFile, JSON.stringify(shows, null, 4));
