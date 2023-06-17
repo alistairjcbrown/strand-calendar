@@ -133,11 +133,13 @@ const generateEventDescription = (show, performance) => {
     });
   });
 
+  await sleep(2000);
+
   // Go to each of the show pages and get the times they're on at
   console.log(`Getting data for ${uniqueShowUrls.size} shows ...`);
   const showUrls = Array.from(uniqueShowUrls);
   const requestsPerBatch = 1;
-  const delayPerBatch = 5000;
+  const delayPerBatch = 3000;
   const batchCount = Math.ceil(showUrls.length / requestsPerBatch);
   const shows = [];
 

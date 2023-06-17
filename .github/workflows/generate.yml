@@ -1,7 +1,10 @@
 on: [workflow_dispatch]
 
+name: Strand Calendar
+
 jobs:
   generate_calendar:
+    name: Generate Calendar
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,8 +30,7 @@ jobs:
           allowUpdates: false
           artifactErrorsFailBuild: true
           artifacts: "strand-calendar.ics,strand-shows.json"
-          # TODO: Undo the two changes below when we're ready to go
-          makeLatest: false
-          tag: test-${{ steps.date.outputs.currentDate }}
+          makeLatest: true
+          tag: ${{ steps.date.outputs.currentDate }}
           commit: main
           body: "Calendar and data files generated at ${{ steps.time.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
