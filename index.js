@@ -5,6 +5,27 @@ const { parse, format, getTime } = require("date-fns");
 const en = require("date-fns/locale/en-GB");
 const ics = require("ics");
 
+const fail = (url, page) => {
+  console.log(
+    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  );
+  console.log(
+    "!! Unexpected page format detected during calendar generation !!"
+  );
+  console.log(
+    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  );
+  console.log("");
+  console.log(
+    "Please review the details below as the page format may have changed"
+  );
+  console.log("");
+  console.log(`Requesting: ${url}`);
+  console.log("Page contents:");
+  console.log(page);
+  process.exit(1);
+};
+
 const parseDateTime = (date, time) =>
   parse(`${date} ${time}`, "EEE do MMMM HH:mm", new Date(), { locale: en });
 
@@ -28,6 +49,7 @@ const formatOverviewItem = (key, value) => {
 const createShowFrom = (url, page) => {
   const $ = cheerio.load(page);
   const title = $(".entry .page_title").text();
+  if (!title) fail(url, page);
 
   const overview = {};
   $(".entry .overview-container .event_list_item").each((i, item) => {
@@ -112,8 +134,8 @@ const generateEventDescription = (show, performance) => {
   // Go to each of the show pages and get the times they're on at
   console.log(`Getting data for ${uniqueShowUrls.size} shows ...`);
   const showUrls = Array.from(uniqueShowUrls);
-  const requestsPerBatch = 3;
-  const delayPerBatch = 2000;
+  const requestsPerBatch = 2;
+  const delayPerBatch = 5000;
   const batchCount = Math.ceil(showUrls.length / requestsPerBatch);
   const shows = [];
 

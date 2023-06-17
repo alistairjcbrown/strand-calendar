@@ -10,9 +10,9 @@ jobs:
       # Setup
       - uses: actions/checkout@v3
       - id: date
-        run: echo "::set-output name=date::$(TZ=Europe/Belfast date +'%Y-%m-%d')"
+        run: echo "{currentDate}={$(TZ=Europe/Belfast date +'%Y-%m-%d')}" >> $GITHUB_STATE
       - id: time
-        run: echo "::set-output name=time::$(TZ=Europe/Belfast date +'%H:%M:%S')"
+        run: echo "{currentTime}={$(TZ=Europe/Belfast date +'%H:%M:%S')}" >> $GITHUB_STATE
       - uses: actions/setup-node@v3
         with:
           node-version-file: .node-version
@@ -27,7 +27,8 @@ jobs:
           allowUpdates: false
           artifactErrorsFailBuild: true
           artifacts: "strand-calendar.ics,strand-shows.json"
+          # TODO: Undo the two changes below when we're ready to go
           makeLatest: false
-          tag: test-${{ steps.date.outputs.date }}
+          tag: test-${{ steps.date.outputs.currentDate }}
           commit: main
-          body: "Calendar and data files generated at ${{ steps.date.outputs.time }} on ${{ steps.date.outputs.date }}"
+          body: "Calendar and data files generated at ${{ steps.time.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
