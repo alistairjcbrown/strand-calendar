@@ -1,3 +1,7 @@
+# output files
+strand-shows.json
+strand-calendar.ics
+
 # Logs
 logs
 *.log

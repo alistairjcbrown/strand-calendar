@@ -1,0 +1,16 @@
+{
+  "name": "strand-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Automatically generate a calendar of events at the Strand cinema",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Alistair Brown <github@alistairjcbrown.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "date-fns": "^2.30.0",
+    "ics": "^3.2.0",
+    "parse-duration": "^1.1.0"
+  }
+}

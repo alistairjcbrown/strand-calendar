@@ -1,2 +1,6 @@
-# strand-calendar
-Automatically generated calendar of events at the Strand cinema
+# 📆 Strand Calendar
+
+Script to automatically generate a calendar of events at the Strand Cinema,
+Belfast
+
+Website: https://www.strandartscentre.com/
