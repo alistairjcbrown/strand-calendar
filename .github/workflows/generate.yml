@@ -1,5 +1,17 @@
 on:
   workflow_dispatch:
+    inputs:
+      tagSuffix:
+        description: 'Tag Suffix'
+        required: true
+        default: '1'
+        type: choice
+        options:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
   schedule:
     - cron: '0 3 * * *'  # every morning at 3am
 
@@ -26,8 +38,8 @@ jobs:
           echo "currentTime=$(TZ=Europe/Belfast date +'%H:%M:%S')" >> "$GITHUB_OUTPUT"
 
       # Generate files
-      - name: Run script to generate calendar
-        run: node index.js
+      - name: Run script to generate calendar (in the corresponding timezone)
+        run: TZ=Europe/Belfast node index.js
 
       # Create release with assets
       - uses: ncipollo/release-action@v1
@@ -37,7 +49,7 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: "strand-calendar.ics,strand-shows.json"
           makeLatest: true
-          tag: ${{ steps.date.outputs.currentDate }}
+          tag: ${{ steps.date.outputs.currentDate }}.${{ inputs.tagSuffix || '0' }}
           commit: main
           body: "Calendar and data files generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
       - name: Output summary
