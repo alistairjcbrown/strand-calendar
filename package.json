@@ -4,7 +4,9 @@
   "private": true,
   "description": "Automatically generate a calendar of events at the Strand cinema",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "generate-calendar": "TZ=Europe/Belfast node index.js"
+  },
   "author": "Alistair Brown <github@alistairjcbrown.com>",
   "license": "MIT",
   "dependencies": {
