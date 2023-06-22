@@ -1,6 +1,7 @@
 # output files
 strand-shows.json
 strand-calendar.ics
+strand-ticket-data.json
 
 # Logs
 logs

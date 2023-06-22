@@ -5,7 +5,8 @@
   "description": "Automatically generate a calendar of events at the Strand cinema",
   "main": "index.js",
   "scripts": {
-    "generate-calendar": "TZ=Europe/Belfast node index.js"
+    "generate-calendar": "TZ=Europe/Belfast node index.js",
+    "get-ticket-data": "TZ=Europe/Belfast node get-ticket-data.js"
   },
   "author": "Alistair Brown <github@alistairjcbrown.com>",
   "license": "MIT",

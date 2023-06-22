@@ -39,6 +39,14 @@ jobs:
 
       # Generate files
       - run: npm run generate-calendar
+      - run: npm run get-ticket-data
+      - name: Check for data discrepancies
+        id: discrepancies
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "summary<<$EOF" >> "$GITHUB_OUTPUT"
+          node ./compare-shows-and-ticket-data.js >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
 
       # Create release with assets
       - uses: ncipollo/release-action@v1
@@ -46,7 +54,7 @@ jobs:
         with:
           allowUpdates: false
           artifactErrorsFailBuild: true
-          artifacts: "strand-calendar.ics,strand-shows.json"
+          artifacts: "strand-calendar.ics,strand-shows.json,strand-ticket-data.json"
           makeLatest: true
           tag: ${{ steps.date.outputs.currentDate }}.${{ inputs.tagSuffix || '0' }}
           commit: main
@@ -55,3 +63,4 @@ jobs:
         run: |
           echo "📆 Calendar generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}" >> $GITHUB_STEP_SUMMARY
           echo "🔖 Release created at ${{ steps.release.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.discrepancies.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
