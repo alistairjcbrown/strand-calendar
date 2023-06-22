@@ -58,9 +58,11 @@ jobs:
           makeLatest: true
           tag: ${{ steps.date.outputs.currentDate }}.${{ inputs.tagSuffix || '0' }}
           commit: main
-          body: "Calendar and data files generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}"
+          body: |
+            Calendar and data files generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}
+            Created by job ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ${{ steps.discrepancies.outputs.summary }}
       - name: Output summary
         run: |
           echo "📆 Calendar generated at ${{ steps.date.outputs.currentTime }} on ${{ steps.date.outputs.currentDate }}" >> $GITHUB_STEP_SUMMARY
-          echo "🔖 Release created at ${{ steps.release.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.discrepancies.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
+          echo "🔖 New release - ${{ steps.release.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY

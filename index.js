@@ -176,8 +176,8 @@ const generateEventDescription = (show, performance) => {
   console.log(`Generating event data ...`);
   // Create an event for each show performance
   const icsFormattedEvents = shows.reduce((events, show) => {
-    // Default to 60 minutes if we don't know the duration
-    const duration = show.overview.duration || 60 * 60 * 1000;
+    // Default to 90 minutes if we don't know the duration
+    const duration = show.overview.duration || 90 * 60 * 1000;
     const showEvents = show.performances.map((performance) => ({
       title: show.title,
       description: generateEventDescription(show, performance),

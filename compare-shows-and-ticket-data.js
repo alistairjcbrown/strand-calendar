@@ -79,7 +79,7 @@ ticketData.forEach((ticketShow) => {
   }
 });
 
-console.log("\n## Data discrepancy check");
+console.log("\n### Data discrepancy check");
 if (missingShows.length > 0 || performanceConflict.length > 0) {
   missingShows.forEach(({ ticketShow }) => {
     console.log(` - ❌ "${ticketShow.title}" has no match in the show data`);
