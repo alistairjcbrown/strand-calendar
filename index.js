@@ -4,6 +4,7 @@ const parseDuration = require("parse-duration");
 const { parse, format, getTime } = require("date-fns");
 const en = require("date-fns/locale/en-GB");
 const ics = require("ics");
+const { extractDate, matchDate } = require("./utils/extract-date");
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -28,8 +29,11 @@ const fail = (url, page) => {
   process.exit(1);
 };
 
-const parseDateTime = (date, time) =>
-  parse(`${date} ${time}`, "EEE do MMMM HH:mm", new Date(), { locale: en });
+const parseDateTime24HourNamedDay = (value) =>
+  parse(value, "EEE do MMMM HH:mm", new Date(), { locale: en });
+
+const parseDateTime12HourNoNamedDay = (value) =>
+  parse(value, "do MMMM h:mmaaa", new Date(), { locale: en });
 
 const getEventDate = (time) =>
   format(time, "yyyy-M-d-H-m", { locale: en })
@@ -54,7 +58,7 @@ const createShowFrom = (url, page) => {
   if (!title) fail(url, page);
 
   const overview = {};
-  $(".entry .overview-container .event_list_item").each((i, item) => {
+  $(".entry .overview-container .event_list_item").each((_, item) => {
     const key = slugify($(item).find(".title").text());
     const value = formatOverviewItem(key, $(item).find(".info").text());
     overview[key] = value;
@@ -69,9 +73,8 @@ const createShowFrom = (url, page) => {
       .each((_, timeLink) => {
         const readableTimeString = $(timeLink).text().trim();
 
-        const performanceDateTime = parseDateTime(
-          readableDateString,
-          readableTimeString
+        const performanceDateTime = parseDateTime24HourNamedDay(
+          `${readableDateString} ${readableTimeString}`
         );
 
         const performanceDetails = $(timeLink)
@@ -87,6 +90,42 @@ const createShowFrom = (url, page) => {
         });
       });
   });
+
+  // If we can't find ticket system performances, let's check it's not a custom event
+  if (performances.length === 0) {
+    // Check for booking link as a signal for custom event
+    const links = $(".wpb-content-wrapper a");
+    const bookingLinks = links.filter(function () {
+      return $(this).text().toLowerCase() === "book tickets";
+    });
+
+    if (bookingLinks.length > 0) {
+      // Use the headings as a source of performance time data
+      const headings = $(".wpb-content-wrapper h2");
+      const headingsWithTime = headings.filter(function () {
+        return !!matchDate($(this).text());
+      });
+
+      if (headingsWithTime.length > 0) {
+        let performanceTimes = [];
+        headingsWithTime.each((_, headingWithTime) => {
+          performanceTimes = performanceTimes.concat(
+            extractDate($(headingWithTime).text())
+          );
+        });
+
+        performanceTimes.forEach(({ day, month, time }) => {
+          const performanceDateTime = parseDateTime12HourNoNamedDay(
+            `${day} ${month} ${time.toUpperCase()}`
+          );
+          performances.push({
+            time: getTime(performanceDateTime),
+            bookingUrl: bookingLinks.eq(0).attr("href"),
+          });
+        });
+      }
+    }
+  }
 
   return {
     title,
