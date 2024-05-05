@@ -1,5 +1,20 @@
 # 📆 Strand Calendar
 
+⚠️ **This code is no longer running** - there will be no new releases published.
+Previously published releases will remain, but data in the last versions
+published may be incorrect.
+
+The Strand Cinema has recently updated their website layout, which has broken
+the scripts in this repo from running correctly. They are also due to close for
+an extended period of time for refusbishment, at the end of June 2024.
+
+Due to this, no updates will be made to the scripts in this repository, and the
+cronjob that generates releases will instead be turned off. This decision may be
+revisited again in the future, but while this notice is in place consider the
+repository to be abandoned.
+
+---
+
 Automatically generated calendar of events at
 [The Strand Cinema, Belfast](https://goo.gl/maps/bfJ5vYmDiAVLakhW8)
 
