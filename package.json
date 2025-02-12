@@ -14,6 +14,6 @@
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.30.0",
     "ics": "^3.2.0",
-    "parse-duration": "^1.1.0"
+    "parse-duration": "^2.1.3"
   }
 }
